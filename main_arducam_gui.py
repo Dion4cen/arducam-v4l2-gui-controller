@@ -7,12 +7,9 @@ import time
 from datetime import datetime
 import os
 import sys
-import subprocess # <-- Added for executing v4l2-ctl commands
+import subprocess
 
 class ArducamGUIController:
-    # We no longer use V4L2_CID_EXPOSURE/FRAME_RATE directly with cv2.CAP_PROP_RAW_V4L2_CONTROL
-    # but the concepts still apply to v4l2-ctl CLI tool (using string names)
-
     def __init__(self, root, device_index=0, initial_exposure=7000, initial_framerate=30):
         self.root = root
         self.root.title("Arducam V4L2 GUI Controller")
@@ -21,7 +18,7 @@ class ArducamGUIController:
         self.device_index = device_index
         # Validate initial values against known ranges from v4l2-ctl
         self.initial_exposure = max(1, min(initial_exposure, 65523)) # min=1, max=65523
-        self.initial_framerate = max(5, min(initial_framerate, 35)) # min=5, max=35
+        self.initial_framerate = max(5, min(initial_framerate, 120)) # min=5, max=120
 
         self.cap = None
         self.capture_thread = None
@@ -89,6 +86,11 @@ class ArducamGUIController:
         ttk.Button(button_frame, text="Capture Image", command=self.save_image).pack(side="left", padx=5, fill="x", expand=True)
         self.record_button = ttk.Button(button_frame, text="Start Recording", command=self.toggle_recording)
         self.record_button.pack(side="left", padx=5, fill="x", expand=True)
+        
+        # New: Quit Button
+        self.quit_button = ttk.Button(button_frame, text="Quit", command=self.on_closing, style="Red.TButton")
+        self.quit_button.pack(side="left", padx=5, fill="x", expand=True)
+
 
         # --- Video Preview Frame ---
         self.canvas_width = 640
@@ -113,10 +115,12 @@ class ArducamGUIController:
             print(f"Command: {' '.join(e.cmd)}")
             print(f"Stdout: {e.stdout.decode().strip()}")
             print(f"Stderr: {e.stderr.decode().strip()}")
-            messagebox.showerror("V4L2 Control Error", 
-                                 f"Failed to set {control_name} to {value}:\n{e.stderr.decode().strip()}")
+            # We don't want a pop-up every loop if an error happens.
+            # messagebox.showerror("V4L2 Control Error", 
+            #                      f"Failed to set {control_name} to {value}:\n{e.stderr.decode().strip()}")
         except FileNotFoundError:
             messagebox.showerror("Error", "v4l2-ctl command not found. Please install v4l2-utils (sudo apt install v4l2-utils).")
+            self.running = False # Critical error, stop the application.
 
 
     def open_camera(self):
