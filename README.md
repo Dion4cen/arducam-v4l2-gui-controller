@@ -42,6 +42,7 @@ Install Python libraries:
 ```bash
 pip install opencv-python numpy Pillow
 ```
+---
 
 ## 🛠️ Installation and Running
 1. Clone the repository:
@@ -58,6 +59,8 @@ Or specify the camera device, initial exposure, and frame rate via command-line 
 ```
 python3 main_arducam_gui.py -v 0 --exposure 7000 --framerate 30
 ```
--v <device_index>: Must be followed by a number. Specifies the camera device index (e.g., 0 for /dev/video0, 1 for /dev/video1).
---exposure <value>: Sets the initial exposure value (range 1 to 65523 based on v4l2-ctl output, in microseconds).
---framerate <value>: Sets the initial frame rate (FPS, range 5 to 35 based on v4l2-ctl output).
++ **-v** <device_index>: Must be followed by a number. Specifies the camera device index (e.g., 0 for /dev/video0, 1 for /dev/video1).
+
++ **--exposur**e <value>: Sets the initial exposure value (range 1 to 65523 based on v4l2-ctl output, in microseconds).
+
++ **--framerate** <value>: Sets the initial frame rate (FPS, range 5 to 35 based on v4l2-ctl output).
