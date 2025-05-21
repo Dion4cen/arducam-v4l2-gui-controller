@@ -40,7 +40,8 @@ On your Jetson Orin Device, please ensure the following software is installed:
 
 Install Python libraries:
 ```bash
-pip install opencv-python numpy Pillow
+sudo apt install python3-opencv
+pip install numpy Pillow
 ```
 ---
 
